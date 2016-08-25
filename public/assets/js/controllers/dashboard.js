@@ -7,87 +7,142 @@ angular.module('app')
     .controller('DashboardCtrl', ['$scope', '$http', '$state', '$timeout', 'clientId', 'DTOptionsBuilder', 'DTColumnDefBuilder', function ($scope, $http, $state, $timeout, clientId, DTOptionsBuilder, DTColumnDefBuilder) {
         $scope.companyusers = [];
         $scope.userkpi = {};
+        $scope.isUserEdit = false;
+        $scope.userIndex = -1;
+       // $scope.newUser = {};
+        var oriUser = { 'gender': 1 };
+        $scope.user = angular.copy(oriUser);
+        $scope.notification = {};
+        $scope.notification.position = 'top';
+        $scope.notification.type = 'bar';
+        function makeRequest(id, callback) {
+            $http.get("/api/getuserlastlunch?id=" + id).success(callback);
+        }
+
+        function resetForm(form) {
+         
+                form.$setPristine();
+                form.$setUntouched();
+
+                // clear the form
+                $scope.user = { 'gender': 1 };
+                angular.element(document.querySelector('#testModel')).modal('hide');
+            
+
+        };
+
+
+
 
         var resetUsers = function () {
             $http.get("/api/companyusers")
                              .success(function (data) {
                                  if (data) {
-                                     //  $scope.companyusers = data;
-                                     angular.forEach(data, function (value, i) {
-
-                                         if (typeof data[i].isPause == 'undefined' || data[i].isPause == false)
-                                             data.isPause = false;
+                                     var iuser = 0;
+                                     var companyusrs = [];
+                                     makeRequest(data[iuser]._id, function success(result) {
+                                      
+                                         if (result)
+                                             data[iuser].lastlunch = result.lastlunch;
                                          else
-                                             data.isPause = true;
+                                             data[iuser].lastlunch = null;
+                                         if (typeof data[iuser].isPause == 'undefined' || data[iuser].isPause == false)
+                                             data[iuser].isPause = false;
+                                         else
+                                             data[iuser].isPause = true;
 
-                                         if (typeof data[i].isDisable == 'undefined' || data[i].isDisable == false)
-                                             $scope.companyusers.push(data[i]);
+                                         if (typeof data[iuser].isDisable == 'undefined' || data[iuser].isDisable == false)
+                                             companyusrs.push(data[iuser]); 
 
-                                     });
-                                     var startdate = new Date();
-                                     startdate.setDate(startdate.getDate() - 7);
-                                     var enddate = new Date();
-                                  //   enddate.setDate(startdate.getDate() + 14);
-                                     var companyid = 0;
-                                     var totallunches = 0;
-                                     var lunchesweek = 0;
-                                     $.post("/api/getpathlength?id=" + companyid, { 'startdate': startdate, 'enddate': enddate }, function (data, status, xhr) {
-                                         var allmetpeoples = [];
-                                         var totalcompanyknown = 0;
-                                         var totalusers = 1;
-                                         if (data) {
-                                             console.log(data.totallunches);
-                                             totallunches = data.totallunches;
-                                             lunchesweek = data.matches.length;
-                                             totalusers = $scope.companyusers.length;
-                                             var activeusers = $scope.companyusers.filter(x=> x.available.length > 0);
-                                             console.log("Total Active Users : " + activeusers.length);
-                                             if (typeof data.company.userunitprice == 'undefined')
-                                                 data.company.userunitprice = 0;
-                                             console.log("Total Billed Amount = Total Active Users * Unit Price = " + (data.company.userunitprice - 0) * (activeusers.length - 0));
-                                             var totalbilledusers = [];
-                                             var matcheddata = [];
-                                             angular.forEach($scope.companyusers, function (value, i) {
-                                                 var knownpeople = [];
-                                                 var alreadyknown = $scope.companyusers[i].known;
-                                                 angular.forEach(data.matches, function (match, m) {
-
-                                                     if (data.matches[m].participants.indexOf($scope.companyusers[i]._id) > -1) {
-                                                         angular.forEach(data.matches[m].participants, function (participants, p) {
-                                                             if (matcheddata.indexOf(data.matches[m]._id) == -1)
-                                                                 totalbilledusers.push(data.matches[m].participants[p]);
-                                                             if (knownpeople.indexOf(data.matches[m].participants[p]) == -1) {
-                                                                 if (data.matches[m].participants[p] != $scope.companyusers[i]._id) {
-                                                                     knownpeople.push(data.matches[m].participants[p]);
-                                                                 }
-                                                             }
-
-                                                         });
-                                                         matcheddata.push(data.matches[m]._id);
-                                                     }
-
-
-                                                 });
-                                                 $scope.companyusers[i].knownpeople = (knownpeople.length - 0) / $scope.companyusers.length;
-                                                 //  totalcompanyknown = (totalcompanyknown - 0) + ((knownpeople.length - 0) - (alreadyknown.length - 0));
-                                                 totalcompanyknown = (totalcompanyknown - 0) + ($scope.companyusers[i].knownpeople - 0);
-                                             });
-                                             console.log("Total Billed Users : " + totalbilledusers.length);
-                                             console.log("Total Lunches : " + data.matches.length);
-                                             console.log("Avg. path length of network in company : " + totalcompanyknown);
-                                             $scope.userkpi.totalcompanyknown = totalcompanyknown;
-                                             // console.log("totalcompanyusers: " + totalusers);
-                                             //console.log("enddate: " + enddate);
-                                             //console.log("Total New People Met: " + allmetpeoples.length);
-                                             //console.log("Total Restaurant Visited: " + restaurantlist.length);
-                                          
-                                             
+                                         iuser = iuser + 1;
+                                         var nextURL = data[iuser];
+                                         if (nextURL) {
+                                             makeRequest(nextURL._id, success);
                                          }
                                          else
-                                             console.log("Error getting companies");
+                                         {
+                                             $scope.companyusers = companyusrs;
+                                             var startdate = new Date();
+                                             startdate.setDate(startdate.getDate() - 21);
+                                             var enddate = new Date();
+                                             //   enddate.setDate(startdate.getDate() + 14);
+                                             var companyid = 0;
+                                             var totallunches = 0;
+                                             var lunchesweek = 0;
+                                             $.post("/api/getpathlength?id=" + companyid, { 'startdate': startdate, 'enddate': enddate }, function (data, status, xhr) {
+                                                 var allmetpeoples = [];
+                                                 var totalcompanyknown = 0;
+                                                 var totalusers = 1;
+                                                 $scope.$apply(function () {
+                                                     if (data) {
+                                                        
+                                                         totallunches = data.totallunches;
+                                                         lunchesweek = data.matches.length;
+                                                         totalusers = $scope.companyusers.length;
+                                                         var activeusers = $scope.companyusers.filter(x=> x.available.length > 0);
+                                                       //  console.log("Total Active Users : " + activeusers.length);
+                                                         if (typeof data.company.userunitprice == 'undefined')
+                                                             data.company.userunitprice = 0;
+                                                        // console.log("Total Billed Amount = Total Active Users * Unit Price = " + (data.company.userunitprice - 0) * (activeusers.length - 0));
+                                                         var totalbilledusers = [];
+                                                         var matcheddata = [];
+                                                         angular.forEach($scope.companyusers, function (value, i) {
+                                                             var knownpeople = [];
+                                                             var userlunch = 0;
+                                                             var alreadyknown = $scope.companyusers[i].known;
+                                                             angular.forEach(data.matches, function (match, m) {
+
+                                                                 if (data.matches[m].participants.indexOf($scope.companyusers[i]._id) > -1) {
+                                                                     userlunch = userlunch + 1;
+
+                                                                     angular.forEach(data.matches[m].participants, function (participants, p) {
+                                                                         if (matcheddata.indexOf(data.matches[m]._id) == -1)
+                                                                             totalbilledusers.push(data.matches[m].participants[p]);
+                                                                         if (knownpeople.indexOf(data.matches[m].participants[p]) == -1) {
+                                                                             if (data.matches[m].participants[p] != $scope.companyusers[i]._id) {
+                                                                                 knownpeople.push(data.matches[m].participants[p]);
+                                                                             }
+                                                                         }
+
+                                                                     });
+                                                                     matcheddata.push(data.matches[m]._id);
+                                                                 }
+
+
+                                                             });
+                                                             $scope.companyusers[i].totallunches = userlunch;
+                                                             $scope.companyusers[i].knownpeople = (knownpeople.length - 0) / $scope.companyusers.length;
+                                                             //  totalcompanyknown = (totalcompanyknown - 0) + ((knownpeople.length - 0) - (alreadyknown.length - 0));
+                                                             totalcompanyknown = (totalcompanyknown - 0) + ($scope.companyusers[i].knownpeople - 0);
+                                                         });
+                                                      //   console.log("Total Billed Users : " + totalbilledusers.length);
+                                                      //   console.log("Total Lunches : " + data.matches.length);
+                                                       //  console.log("Avg. path length of network in company : " + totalcompanyknown);
+                                                         $scope.userkpi.totalcompanyknown = totalcompanyknown;
+                                                         // console.log("totalcompanyusers: " + totalusers);
+                                                         //console.log("enddate: " + enddate);
+                                                         //console.log("Total New People Met: " + allmetpeoples.length);
+                                                         //console.log("Total Restaurant Visited: " + restaurantlist.length);
+
+
+                                                     }
+                                                     else
+                                                         console.log("Error getting companies");
+
+                                                     $scope.userkpi.totallunches = totallunches;
+                                                     $scope.userkpi.lunchesweek = lunchesweek;
+
+                                                 });
+                                             });
+
+
+
+                                         }
                                      });
-                                     $scope.userkpi.totallunches = totallunches;
-                                     $scope.userkpi.lunchesweek = lunchesweek;
+
+
+
+                                     
                                  }
                                  else
                                      console.log("Error getting users");
@@ -113,17 +168,13 @@ angular.module('app')
 
 
 
-
-
-
-
         if (clientId.value == '') {
             $http.get("/api/getLoggedInUser")
                        .success(function (data) {
 
                            if (data) {
                                $scope.loggedInUser = data;
-                               console.log("User is logged in.", data);
+                               console.log("User is logged in.");
                                clientId.value = data;
                                resetUsers();
                            }
@@ -142,11 +193,59 @@ angular.module('app')
 
 
 
-
+        //$scope.updateUser = function ()
+        //{
+        //    console.log(newuser);
+        //    console.log(user);
+        //    angular.element(document.querySelector('#testModel')).modal('hide');
+        //    $scope.newUser = {};
+        //    $scope.user = {'gender':'Male'};
+        //}
        
-        
+        $scope.updateUser = function (form) {
+            if (clientId.value != '') {
+                $scope.user.companyid = clientId.value.companyid;
+                var message = "User added successfully";
 
+                var currentuser = { 'name': $scope.user.name, 'phone': $scope.user.phone, 'email': $scope.user.email, 'gender': $scope.user.gender, 'isPause': false, 'lastlunch': null,'knownpeople':0,'totallunches':0,'role':['User'] };
+                $.post('/api/addUser', $scope.user, function (data, status, xhr) {
+                    //  resetUsers();
+                    $scope.user.isPause = false;
+                    $scope.user.lastlunch = '';
+                    $scope.$apply(function () {
+                        $scope.companyusers.push(currentuser);
+                    });
+                    $('body').pgNotification({
+                        style: 'bar',
+                        message: message,
+                        position: $scope.notification.position,
+                        timeout: 0,
+                        type: "success"
+                    }).show();
+                });
+                resetForm(form);
+               
+            }
+        };
 
+        $scope.deleteUser = function ($event, i) {
+            var currentuser = $scope.companyusers[i];
+         //   $scope.$apply(function () {
+             //   $scope.companyusers[i].isDisable = true;
+            $scope.companyusers.splice(i, 1);
+          //  });
+            $.post('/api/deleteUser', currentuser, function (data, status, xhr) {
+               
+                $('body').pgNotification({
+                    style: 'bar',
+                    message: "User deleted successfully",
+                    position: $scope.notification.position,
+                    timeout: 0,
+                    type: "success"
+                }).show();
+               
+            });
+        };
 
         
            
@@ -161,18 +260,7 @@ angular.module('app')
 
         }
 
-        $http.get('assets/js/api/charts.json').success(function(data) {
-            $scope.widget_4_data = data.nvd3.productRevenue;
-            $scope.widget_12_data = data.nvd3.line;
-        });
-
-        $http.get('assets/js/api/min_sales_chart.json').success(function(data) {
-            $scope.widget_8_data = data.siteVisits;
-            $scope.widget_7_data = data.premarket;
-            $scope.widget_16_data = data.siteVisits;
-
-        });
-		
+      
 		
 		var table = $('#tableWithExportOptions');
 

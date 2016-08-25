@@ -1344,15 +1344,17 @@ passport.use(new LocalStrategy(function (username, password, done) {
   app.post('/api/addUser', function(req, res){
 
       // only Admins can add new users
-      if( req.isAuthenticated() && req.session.passport.user[0].adminStatus ){
-
+      //  if( req.isAuthenticated() && req.session.passport.user[0].adminStatus ){
+      if (req.isAuthenticated()) {
+          console.log(req.body);
             // add only if no user with same email exists
             User.find({
               'email' : req.body.email
             }, function(err, user){
 
                 if(err) console.log("Error while adding user", err); 
-
+                if (typeof req.body.role == 'undefined')
+                    req.body.role = ["User"];
                 // user is always an array - remember this!
                 if(user.length == 0)
                   lunchedin.addUser(req.body);
@@ -1932,8 +1934,10 @@ passport.use(new LocalStrategy(function (username, password, done) {
                           date: { "$gte": req.body.startdate, "$lt": req.body.enddate }
                       }
                       Match.find(criteria2, function (err, lunches) {
-                          console.log(lunches.length);
+                          console.log(lunches);
+
                           Match.find(criteria, function (err, glmatches) {
+                              console.log(glmatches.length);
                               res.json({ 'totallunches': lunches.length, 'users': getusers, 'matches': glmatches, 'company': getcompany });
                           });
                       });
@@ -1945,6 +1949,22 @@ passport.use(new LocalStrategy(function (username, password, done) {
       else
           res.json(null);
   });
+
+  app.get('/api/getuserlastlunch', function (req, res) {
+      var userids = [];
+      userids.push(ObjectId(req.query.id));
+      Match.findOne({
+          participants: { $in: userids }
+      }).sort({ date: -1 })
+                     .exec(function (err, result) {
+                         if (result)
+                             res.json({ 'lastlunch': result.date });
+                         else
+                             res.json({ 'lastlunch': null });
+
+                     });
+  });
+
 
   app.get('/api/getuserbyid', function (req, res) {
       User.findOne({

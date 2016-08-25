@@ -10,7 +10,8 @@ var app = angular.module('app', [
     'ui.router',
     'ui.utils',
     'oc.lazyLoad',
-    'datatables'
+    'datatables',
+    'ngtimeago'
 ]);
 
 app.value('clientId', { value: '' });

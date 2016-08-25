@@ -29,7 +29,7 @@ angular.module('app')
                                     'metrojs',
                                     'sparkline',
                                     'skycons',
-                                    'switchery','dataTables' ,'datepicker'
+                                    'switchery', 'dataTables', 'datepicker'
                                 ], {
                                     insertBefore: '#lazyload_placeholder'
                                 })

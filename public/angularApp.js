@@ -1013,8 +1013,7 @@ app.controller("hr", function ($scope, $http, DTOptionsBuilder, DTColumnDefBuild
             $http.get("/api/companyusers")
                              .success(function (data) {
                                  if (data) {
-                                     //  $scope.companyusers = data;
-                                     console.log(data);
+                                     
                                      angular.forEach(data, function (value, i) {
 
                                          if (typeof data[i].isPause == 'undefined' || data[i].isPause == false)
@@ -1027,17 +1026,21 @@ app.controller("hr", function ($scope, $http, DTOptionsBuilder, DTColumnDefBuild
 
                                      });
                                      var startdate = new Date();
-                                     startdate.setDate(startdate.getDate() - 7);
+                                     startdate.setDate(startdate.getDate() - 30);
                                      var enddate = new Date();
                                      var companyid = 0;
                                      $.post("/api/getpathlength?id=" + companyid, { 'startdate': startdate, 'enddate': enddate }, function (data, status, xhr) {
                                          var allmetpeoples = [];
                                          var totalcompanyknown = 0;
                                          var totalusers = 1;
+                                         console.log('data')
+                                         console.log(data);
                                          if (data) {
+                                             console.log('data.totallunches');
                                              console.log(data.totallunches);
                                              $scope.userkpi.totallunches = data.totallunches;
                                              $scope.userkpi.lunchesweek = data.matches.length;
+                                             $scope.$apply();
                                              totalusers = $scope.companyusers.length;
                                              var activeusers = $scope.companyusers.filter(x=> x.available.length > 0);
                                              console.log("Total Active Users : " + activeusers.length);
@@ -1075,6 +1078,7 @@ app.controller("hr", function ($scope, $http, DTOptionsBuilder, DTColumnDefBuild
                                              console.log("Total Lunches : " + data.matches.length);
                                              console.log("Avg. path length of network in company : " + totalcompanyknown);
                                              $scope.userkpi.totalcompanyknown = totalcompanyknown;
+                                             $scope.$apply();
                                              // console.log("totalcompanyusers: " + totalusers);
                                              //console.log("enddate: " + enddate);
                                              //console.log("Total New People Met: " + allmetpeoples.length);

@@ -3697,7 +3697,7 @@ Misc buttons
   background-image: none;
   box-shadow: none;
   text-shadow: none;
-  padding: 9px 15px 9px 19px;
+  padding: 9px 19px 9px 15px;
   border-radius: 3px;
   font-size: 13px;
   border-width: 0;
@@ -3732,8 +3732,8 @@ Misc buttons
   position: relative;
   opacity: 0.8;
   top: 4.5px;
-  float: left;
-  margin-right: 20px;
+  float: right;
+  margin-left: 20px;
   font-size: 0;
 }
 .alert .close:hover {
@@ -3840,7 +3840,7 @@ Misc buttons
 }
 .notification-toggle {
   top: 35px;
-  right: -26px;
+  left: -26px;
   padding: 0;
 }
 .notification-toggle:before {
@@ -3861,9 +3861,9 @@ Misc buttons
 }
 .notification-panel .notification-body .notification-item {
   position: relative;
-  margin-right: 25px;
+  margin-left: 25px;
   background-color: #fff;
-  padding-left: 26px;
+  padding-right: 26px;
 }
 .notification-panel .notification-body .notification-item.unread .heading {
   opacity: 1;
@@ -3876,11 +3876,11 @@ Misc buttons
 }
 .notification-panel .notification-body .notification-item .heading {
   line-height: 43px;
-  margin-left: 5px;
+  margin-right: 5px;
   background: #fff;
   border-bottom: 1px solid #e6e6e6;
   position: relative;
-  float: right;
+  float: left;
   width: 100%;
   font-size: 14px;
   opacity: 0.7;
@@ -3891,7 +3891,7 @@ Misc buttons
   width: 5px;
   height: 100%;
   background-color: #fff;
-  left: 0;
+  right: 0;
   top: 1px;
 }
 .notification-panel .notification-body .notification-item .heading .thumbnail-wrapper {
@@ -3903,7 +3903,7 @@ Misc buttons
 }
 .notification-panel .notification-body .notification-item .heading .time {
   font-size: 11px;
-  margin-left: 8px;
+  margin-right: 8px;
 }
 .notification-panel .notification-body .notification-item .heading.open {
   display: block;
@@ -3928,13 +3928,13 @@ Misc buttons
   position: relative;
 }
 .notification-panel .notification-body .notification-item .more-details .more-details-inner {
-  margin-right: 10px;
-  padding-right: 28px;
+  margin-left: 10px;
+  padding-left: 28px;
   padding-top: 15px;
   margin-bottom: 20px;
   position: relative;
-  border-right: 1px solid rgba(230, 230, 230, 0.7);
-  text-align: right;
+  border-left: 1px solid rgba(230, 230, 230, 0.7);
+  text-align: left;
 }
 .notification-panel .notification-body .notification-item .more-details .more-details-inner:after {
   width: 14px;
@@ -3942,7 +3942,7 @@ Misc buttons
   position: absolute;
   content: '';
   background-color: #fff;
-  right: -7px;
+  left: -7px;
   top: 25px;
   border: 1px solid rgba(230, 230, 230, 0.9);
   border-radius: 99px;
@@ -3953,7 +3953,7 @@ Misc buttons
   color: #c0c0c0;
   position: absolute;
   bottom: 0;
-  right: -5px;
+  left: -5px;
   content: ' \25CF';
   font-size: 13px;
   line-height: 5px;
@@ -3968,7 +3968,7 @@ Misc buttons
   position: absolute;
   height: 44px;
   width: 26px;
-  left: 0;
+  right: 0;
   text-align: center;
   vertical-align: middle;
   line-height: 44px;

@@ -35,13 +35,13 @@ angular.module('app')
 
 
         var resetUsers = function () {
+            
             $http.get("/api/companyusers")
-                             .success(function (data) {
+                             .success(function (data) {                              
                                  if (data) {
                                      var iuser = 0;
                                      var companyusrs = [];
-                                     makeRequest(data[iuser]._id, function success(result) {
-                                      
+                                     makeRequest(data[iuser]._id, function success(result) {                                         
                                          if (result)
                                              data[iuser].lastlunch = result.lastlunch;
                                          else
@@ -60,7 +60,7 @@ angular.module('app')
                                              makeRequest(nextURL._id, success);
                                          }
                                          else
-                                         {
+                                         {                                            
                                              $scope.companyusers = companyusrs;
                                              var startdate = new Date();
                                              startdate.setDate(startdate.getDate() - 21);
@@ -206,36 +206,82 @@ angular.module('app')
             if (clientId.value != '') {
                 $scope.user.companyid = clientId.value.companyid;
                 var message = "User added successfully";
-
+                var updateMessage = "User updated successfully";
                 var currentuser = { 'name': $scope.user.name, 'phone': $scope.user.phone, 'email': $scope.user.email, 'gender': $scope.user.gender, 'isPause': false, 'lastlunch': null,'knownpeople':0,'totallunches':0,'role':['User'] };
-                $.post('/api/addUser', $scope.user, function (data, status, xhr) {
-                    //  resetUsers();
-                    $scope.user.isPause = false;
-                    $scope.user.lastlunch = '';
-                    $scope.$apply(function () {
-                        $scope.companyusers.push(currentuser);
+                if ($scope.isUserEdit==false) {
+                    $.post('/api/addUser', $scope.user, function (data, status, xhr) {
+                        //  resetUsers();
+                        $scope.user.isPause = false;
+                        $scope.user.lastlunch = '';
+                        $scope.$apply(function () {
+                            $scope.companyusers.push(currentuser);
+                        });
+                        $('body').pgNotification({
+                            style: 'bar',
+                            message: message,
+                            position: $scope.notification.position,
+                            timeout: 0,
+                            type: "success"
+                        }).show();
                     });
-                    $('body').pgNotification({
-                        style: 'bar',
-                        message: message,
-                        position: $scope.notification.position,
-                        timeout: 0,
-                        type: "success"
-                    }).show();
-                });
+                   
+                }
+                else {
+                //    debugger;
+                    var i = $scope.userIndex;
+                    var _t = $scope.companyusers[i];
+                    $scope.user = {
+                        'name': $scope.user.name,
+                        'email': $scope.user.email,
+                        'gender': $scope.user.gender,
+                        'companyid':  $scope.user.companyid = clientId.value.companyid, 
+                        'id': _t._id
+                    };
+                   //// debugger;
+                   // $scope.user.available = $scope.selection;
+                    $.post('/api/updateUser', $scope.user, function (data, status, xhr) {
+                       // debugger;
+                        $scope.user.isPause = false;
+                        $scope.user.lastlunch = '';
+                       // debugger;
+                        if (status == "success") {
+                            //    debugger;
+                           // $timeout(function () { resetUsers(); }, 6000);
+                            
+                        }
+                        $scope.$apply(function () {                                                     
+                            $scope.companyusers.splice(i, 1);
+                            $scope.companyusers.push(currentuser);
+                        });
+
+                        $('body').pgNotification({
+                            style: 'bar',
+                            message: updateMessage,
+                            position: $scope.notification.position,
+                            timeout: 0,
+                            type: "success"
+                        }).show();
+                    });
+                }
                 resetForm(form);
+               
                
             }
         };
-
+        $scope.getUser = function ($event, i) {          
+            $scope.isUserEdit = true;
+            $scope.userIndex = i;
+            var _t = $scope.companyusers[i];
+            $scope.user = { 'name': _t.name, 'email': _t.email, 'gender': _t.gender, 'companyid': _t.companyid, 'phone': _t.phone };
+            $scope.selection = _t.available;
+        };
         $scope.deleteUser = function ($event, i) {
             var currentuser = $scope.companyusers[i];
          //   $scope.$apply(function () {
-             //   $scope.companyusers[i].isDisable = true;
+            $scope.companyusers[i].isDisable = true;
             $scope.companyusers.splice(i, 1);
           //  });
-            $.post('/api/deleteUser', currentuser, function (data, status, xhr) {
-               
+            $.post('/api/deleteUser', currentuser, function (data, status, xhr) {              
                 $('body').pgNotification({
                     style: 'bar',
                     message: "User deleted successfully",
@@ -246,7 +292,25 @@ angular.module('app')
                
             });
         };
-
+        $scope.updateStatus = function ($event, i, status) {
+            var message = "";
+            if (status == false) {
+                message="User is active now."
+            }
+            else {
+                message = "User is paused now."
+            }
+            $scope.companyusers[i].isPause = status;
+            $.post('/api/updateStatus', $scope.companyusers[i], function (data, status, xhr) {  
+                $('body').pgNotification({
+                    style: 'bar',
+                    message: message,
+                    position: $scope.notification.position,
+                    timeout: 0,
+                    type: "success"
+                }).show();
+            });
+        };
         
            
         $scope.refreshTest = function(portlet) {

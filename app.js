@@ -1371,7 +1371,8 @@ passport.use(new LocalStrategy(function (username, password, done) {
   });
 
   app.post('/api/deleteUser', function (req, res) {
-      if (req.isAuthenticated() && req.session.passport.user[0].adminStatus) {
+      //&& req.session.passport.user[0].adminStatus
+      if (req.isAuthenticated()) {
           User.findOne({
               "_id": ObjectId(req.body._id)
           }, function (err, user) {
@@ -1395,7 +1396,8 @@ passport.use(new LocalStrategy(function (username, password, done) {
   app.post('/api/updateStatus', function (req, res) {
       console.log('updateStatus');
       console.log(req.body);
-      if (req.isAuthenticated() && req.session.passport.user[0].adminStatus) {
+      //&& req.session.passport.user[0].adminStatus    
+      if (req.isAuthenticated()) {
 
           // add only if no user with same email exists
           User.findOne({
@@ -1427,7 +1429,8 @@ passport.use(new LocalStrategy(function (username, password, done) {
       console.log('/api/updateUser');
       console.log(req.body);
       // only Admins can add new users
-      if (req.isAuthenticated() && req.session.passport.user[0].adminStatus) {
+    //  && req.session.passport.user[0].adminStatus
+      if (req.isAuthenticated() ) {
 
           // add only if no user with same email exists
           User.findOne({
@@ -1601,10 +1604,11 @@ passport.use(new LocalStrategy(function (username, password, done) {
   });
 
   app.get('/api/companyusers', function (req, res) {
+     
       if(req.isAuthenticated()){ 
           // get mongoose to extract all users in the database
           var companyid = req.session.passport.user[0].companyid;
-          console.log(companyid);
+          console.log(companyid);         
           User.find({ 'companyid': ObjectId(companyid) }, function (err, users) {
 
               if(err || users.length == 0)

@@ -16,6 +16,31 @@ angular.module('app')
                     url: "/app",
                     templateUrl: "tpl/app.html"
                 })
+                //.state('app.main', {
+                //    url: "/index",
+                //    templateUrl: "index.html",
+                //    controller: 'MainCtrl',
+                //    resolve: {
+                //        deps: ['$ocLazyLoad', function ($ocLazyLoad) {
+                //            return $ocLazyLoad.load([
+                //                    'nvd3',
+                //                    'mapplic',
+                //                    'rickshaw',
+                //                    'metrojs',
+                //                    'sparkline',
+                //                    'skycons',
+                //                    'switchery', 'dataTables', 'datepicker'
+                //            ], {
+                //                insertBefore: '#lazyload_placeholder'
+                //            })
+                //                .then(function () {
+                //                    return $ocLazyLoad.load([
+                //                        'assets/js/controllers/Main.js'
+                //                    ]);
+                //                });
+                //        }]
+                //    }
+                //})
                 .state('app.dashboard', {
                     url: "/dashboard",
                     templateUrl: "tpl/dashboard.html",
@@ -41,6 +66,32 @@ angular.module('app')
                         }]
                     }
                 })
+
+                 .state('app.admindashboard', {
+                     url: "/adminDashboard",
+                     templateUrl: "tpl/company_admin.html",
+                     controller: 'AdminDashboardCtrl',
+                     resolve: {
+                         deps: ['$ocLazyLoad', function ($ocLazyLoad) {
+                             return $ocLazyLoad.load([
+                                     'nvd3',
+                                     'mapplic',
+                                     'rickshaw',
+                                     'metrojs',
+                                     'sparkline',
+                                     'skycons',
+                                     'switchery', 'dataTables', 'datepicker'
+                             ], {
+                                 insertBefore: '#lazyload_placeholder'
+                             })
+                                 .then(function () {
+                                     return $ocLazyLoad.load([
+                                         'assets/js/controllers/adminDashboard.js'
+                                     ]);
+                                 });
+                         }]
+                     }
+                 })
 
             // Email app
             .state('app.email', {

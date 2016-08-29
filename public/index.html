@@ -39,7 +39,7 @@
     </script>
 </head>
 
-<body class="fixed-header" ng-class="{
+<body  class="fixed-header" ng-class="{
 'bg-master-lighter': is('app.extra.timeline'),
 'no-header': is('app.social') || is('app.calendar') || is('app.maps.vector') || is('app.maps.google'),
 'menu-pin' : app.layout.menuPin || is('boxed'),
@@ -94,9 +94,36 @@
     <script src="assets/js/directives/pg-tab-dropdownfx.js" type="text/javascript"></script>
     <script src="assets/js/directives/skycons.js" type="text/javascript"></script>
     <script src="assets/js/controllers/search.js" type="text/javascript"></script>
-   
+    <script src="assets/js/controllers/Main.js"></script>
     <!-- END CORE TEMPLATE JS -->
+   
+    <!--<div ng-switch="loggedInUser != null" ng-app="lunchedIn" ng-controller="MainCtrl">
 
+        <div ng-switch-when="false">
+            <ng-include src="'tpl/extra_login.html'"> </ng-include>
+        </div>
+
+        <div ng-switch-when="true">
+            <div ng-switch="loggedInUser.adminStatus == true">
+
+                <div ng-switch-when="false">
+                    <div ng-if="isRole('HR')" ng-controller="hr">
+                        <ng-include src="'tpl/hr_dashboard.html'"> </ng-include>
+                    </div>
+                    <div ng-if="isRole('User')" ng-controller="user">
+                        <ng-include src="'tpl/user_dashboard.html'"> </ng-include>
+                    </div>
+                    <div ng-if="isRole('Director')" ng-controller="director">
+                        <ng-include src="'tpl/director_dashboard.html'"> </ng-include>
+                    </div>
+                </div>
+                <div ng-switch-when="true" ng-controller="admin">
+                    <ng-include src="'tpl/company_admin.html'"> </ng-include>
+                </div>
+            </div>
+
+        </div>
+    </div>-->
    
 
 

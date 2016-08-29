@@ -34,7 +34,15 @@ angular.module('app')
                                  $scope.loggedInUser = data;
                                  console.log("User is logged in.", data);
                                  clientId.value = data;
-                                 $state.go('app.dashboard');
+                                 debugger;
+                                 if (data.adminStatus == true) {
+                                     $state.go('app.admindashboard');
+                                 }
+                                 else {
+                                     $state.go('app.dashboard');
+                                 }
+                              
+
                              }
                              else
                                  console.log("User is not logged in.");

@@ -478,7 +478,8 @@
 
                </div>
                <div class="modal-footer">
-                   <button id="add-app" type="submit" ng-disabled="newUser.$invalid" class="btn btn-primary  btn-cons">Add</button>
+                   <button id="add-app" ng-show="!isUserEdit" type="submit" ng-disabled="newUser.$invalid" class="btn btn-primary  btn-cons">Add</button>
+                   <button id="add-app" ng-show="isUserEdit" type="submit" ng-disabled="newUser.$invalid" class="btn btn-primary  btn-cons">Update</button>
                    <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-cons "> Close</button>
                </div>
            </div>
@@ -531,7 +532,7 @@
                         <td class="v-align-middle text-center">
                             <div class="btn-group">
                                 <div class="actionbtn">
-                                    <button title="Edit User" ng-click="getUser($event,$index)" class="btn btn-success">
+                                    <button title="Edit User" ng-click="getUser($event,$index)" class="btn btn-success" id="show-modal" data-toggle="modal" data-target="#testModel">
                                         <i class="fa fa-pencil"></i>
                                     </button>
                                     <button title="Remove User" ng-click="deleteUser($event,$index)" class="btn btn-danger">

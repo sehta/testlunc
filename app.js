@@ -32,7 +32,7 @@ var schedule = require('node-schedule');
 var RSVP = require('rsvp');
 
 var cloudinary = require('cloudinary');
-
+var fs = require('fs');
 
 // configuration ==============================
 /* 
@@ -94,6 +94,27 @@ app.use(passport.session());
 // General Functions
 //
 //
+
+
+app.use(function (req, res, next) {
+    if (req.body) {
+        var url = req.protocol + '://' + req.get('host') + req.originalUrl;
+        var path = 'public/log.txt';
+        var str = "==============Request Date: " + new Date() + "============\r\n";
+        str = str + "URL:" + url + "\r\n";
+        str = str + "Body:" + JSON.stringify(req.body) + "\r\n";
+        str = str + "============================\r\n";
+        var dd = '';
+        fs.open(path, 'a', 666, function (e, id) {
+            fs.write(id, str, null, 'utf8', function () {
+                fs.close(id, function () {
+                    console.log('file closed');
+                });
+            });
+        });
+    }
+    next()
+})
 
 var clearDatabase = function( database, stringName, callback ){
 
@@ -1091,6 +1112,11 @@ passport.use(new LocalStrategy(function (username, password, done) {
       else
         res.json(null);
 
+  });
+  
+  app.post('/api/logtest', function (req, res) {
+      console.log(req.body);
+      res.json("Success");
   });
 
   /*
